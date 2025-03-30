@@ -10,4 +10,4 @@
 # Conexão ao repositório remoto
 # Publicação do projeto
 
-# Sinta-se à vontade para explorar e contribuir
+# Sinta-se à vontade para explorar e contribuir!
