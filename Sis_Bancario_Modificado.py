@@ -1,3 +1,8 @@
+# # INSERINDO LIMITE DIÁRIO DE TRANSAÇÃO E EXTRATO COM DATA E HORA # #
+
+from datetime import datetime
+
+
 menu = """
 
 [d] Depositar
@@ -12,8 +17,8 @@ menu = """
 saldo = 0
 limite = 500
 extrato = ""
-numero_saques = 0
-LIMITE_SAQUE = 3
+LIMITE_SAQUE_DIARIO = 10
+registro_saques = []  # registrando data/hora dos saques
 
 
 # Operação de deposito
@@ -27,7 +32,8 @@ while True:
         
         if valor > 0:
             saldo += valor
-            extrato += f"Depósito: R$ {valor:.2f}\n"
+            horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            extrato += f"[{horario}] Depósito: R$ {valor:.2f}\n"
             print("Depósito concluído com sucesso!")
 
         else:
@@ -38,10 +44,16 @@ while True:
 
     elif opcao == "s":
         valor = float(input("Informe o valor que deseja sacar: "))
+        agora = datetime.now()
+        data_hoje = agora.date()
+
+     # Conta quantos saques foram feitos hoje
+        saques_hoje = [s for s in registro_saques if s.date() == data_hoje]
+
 
         excedeu_saldo = valor > saldo
         excedeu_limite = valor > limite
-        excedeu_saques = numero_saques >= LIMITE_SAQUE
+        excedeu_saques = len(saques_hoje) >= LIMITE_SAQUE_DIARIO
 
         if excedeu_saldo:
             print("Operação falhou! Saldo insuficiente!")
@@ -54,8 +66,9 @@ while True:
         
         elif valor > 0:
             saldo -= valor
-            extrato += f"Saque: R$ {valor:.2f}\n"
-            numero_saques += 1
+            registro_saques.append(agora)  # salva data/hora do saque
+            horario = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            extrato += f"[{horario}] Saque: R$ {valor:.2f}\n"
             print("Operação concluída! Saque realizado com sucesso!")
 
         else:
@@ -78,4 +91,3 @@ while True:
 
     else:
         print("Operação falhou! O valor informado é inválido. Tente novamente.")
-        
